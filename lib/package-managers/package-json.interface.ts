@@ -1,0 +1,32 @@
+export interface PackageJson {
+  name: string;
+  version: string;
+  description: string;
+  keywords?: string;
+  homepage?: string;
+  bugs?: Record<'url' | 'email', string>;
+  license?: string;
+  author?: string;
+  contributors?: Array<string | Record<'url' | 'email' | 'name', string>>;
+  files?: string[];
+  main?: string;
+  browser?: string;
+  bin?: Record<string, string> | string;
+  man?: string | string[];
+  directories?: Record<string, string>;
+  repository?: Record<'url' | 'type', string>;
+  scripts?: Record<string, string>;
+  config?: Record<string, string>;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  bundleDependencies?: string[];
+  optionalDependencies?: Record<string, string>;
+  overrides?: Record<string, Record<string, string> | string>;
+  engines?: Record<string, string>;
+  os?: string[];
+  cpu?: string[];
+  private?: boolean;
+  publishConfig?: Record<string, string>;
+  workspaces?: string[];
+}

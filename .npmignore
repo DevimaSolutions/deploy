@@ -1,0 +1,42 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+*.md
+
+# testing
+/coverage
+*.spec.ts
+*.snap
+
+# source
+**/*.ts
+*.ts
+
+# definitions
+!**/*.d.ts
+!*.d.ts
+
+
+# misc
+.DS_Store
+*.pem
+.tsbuildinfo
+*.tsbuildinfo
+/.vscode
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# configuration
+.editorconfig
+.eslintrc.js
+.eslintignore
+tsconfig.json
+.gitignore
+.prettierrc
+.prettierignore
+.watchmanconfig
+
