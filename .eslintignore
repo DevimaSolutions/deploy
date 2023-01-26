@@ -1,2 +1,6 @@
-dist
 node_modules
+.eslintrc.js
+**/*.js
+**/*.d.ts
+!gulpfile.js
+!types/**/*.d.ts

@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 
-import { CommandLoader } from '../commands/index.js';
+import { CommandLoader } from '../commands/command.loader.js';
 import { packageInfo } from '../lib/utils/package-info.js';
 
 const bootstrap = () => {

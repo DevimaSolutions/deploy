@@ -38,5 +38,4 @@ tsconfig.json
 .gitignore
 .prettierrc
 .prettierignore
-.watchmanconfig
 

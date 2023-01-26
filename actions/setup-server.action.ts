@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import chalk from 'chalk';
 
 import { AbstractPackageManager, PackageManagerFactory } from '../lib/package-managers/index.js';
@@ -6,16 +9,22 @@ import { packageInfo } from '../lib/utils/package-info.js';
 
 import { AbstractAction } from './abstract.action.js';
 
+interface LockfileDependency {
+  version: string;
+}
 
-export class InfoAction extends AbstractAction {
+interface PackageJsonDependencies {
+  [key: string]: LockfileDependency;
+}
+
+export class SetupServerAction extends AbstractAction {
   private manager!: AbstractPackageManager;
 
   public async handle() {
     this.manager = await PackageManagerFactory.find();
     this.displayBanner();
     await this.displaySystemInformation();
-    this.displayCliVersion();
-    // TODO: display current configuration status
+    await this.displayInformation();
   }
 
   private displayBanner() {
@@ -37,8 +46,24 @@ export class InfoAction extends AbstractAction {
     }
   }
 
+  async displayInformation(): Promise<void> {
+    this.displayCliVersion();
+  }
+
   displayCliVersion(): void {
     console.info(chalk.green('[DS Deploy CLI]'));
     console.info('DS Deploy CLI Version :', chalk.blue(packageInfo.version), '\n');
+  }
+
+  readProjectPackageDependencies(): PackageJsonDependencies {
+    const buffer = readFileSync(join(process.cwd(), 'package.json'));
+    const pack = JSON.parse(buffer.toString());
+    const dependencies = { ...pack.dependencies, ...pack.devDependencies };
+    Object.keys(dependencies).forEach((key) => {
+      dependencies[key] = {
+        version: dependencies[key],
+      };
+    });
+    return dependencies;
   }
 }

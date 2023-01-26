@@ -2,11 +2,11 @@ import { Command } from 'commander';
 
 import { AbstractCommand } from './abstract.command.js';
 
-export class InfoCommand extends AbstractCommand {
+export class DeployLocalCommand extends AbstractCommand {
   public load(program: Command) {
     program
-      .command('info')
-      .description('Display DS Deploy command details.')
+      .command('deploy:local')
+      .description('Clean local folder from ds-deploy package configuration files.')
       .action(async () => {
         await this.action.handle();
       });

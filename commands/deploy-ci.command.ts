@@ -2,11 +2,11 @@ import { Command } from 'commander';
 
 import { AbstractCommand } from './abstract.command.js';
 
-export class InfoCommand extends AbstractCommand {
+export class DeployCiCommand extends AbstractCommand {
   public load(program: Command) {
     program
-      .command('info')
-      .description('Display DS Deploy command details.')
+      .command('deploy:ci')
+      .description('Setup CI/CD for the server (Only github actions are currently available).')
       .action(async () => {
         await this.action.handle();
       });
