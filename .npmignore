@@ -38,4 +38,6 @@ tsconfig.json
 .gitignore
 .prettierrc
 .prettierignore
+.circleci
+.husky
 

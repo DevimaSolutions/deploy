@@ -1,9 +1,32 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 
-import { CleanLocalAction, CleanServerAction, DeployAction, DeployCiAction, DeployEnvAction, DeployLocalAction, InfoAction, InitAction, MultiAction, SetupServerAction } from '../actions/index.js';
+import {
+  CleanLocalAction,
+  CleanServerAction,
+  DeployAction,
+  DeployCiAction,
+  DeployEnvAction,
+  DeployLocalAction,
+  InfoAction,
+  InitAction,
+  MultiAction,
+  SetupServerAction,
+} from '../actions/index.js';
 import { ERROR_PREFIX } from '../lib/ui/index.js';
-import { CleanCommand, CleanLocalCommand, CleanServerCommand, DeployCiCommand, DeployCommand, DeployEnvCommand, DeployLocalCommand, InfoCommand, InitCommand, ServerSetupCommand } from './index.js';
+
+import {
+  CleanCommand,
+  CleanLocalCommand,
+  CleanServerCommand,
+  DeployCiCommand,
+  DeployCommand,
+  DeployEnvCommand,
+  DeployLocalCommand,
+  InfoCommand,
+  InitCommand,
+  ServerSetupCommand,
+} from './index.js';
 
 export class CommandLoader {
   public static load(program: Command): void {
@@ -18,10 +41,9 @@ export class CommandLoader {
 
     new CleanLocalCommand(new CleanLocalAction()).load(program);
     new CleanServerCommand(new CleanServerAction()).load(program);
-    new CleanCommand(new MultiAction([
-      new CleanServerAction(),
-      new CleanLocalAction()
-    ])).load(program);
+    new CleanCommand(new MultiAction([new CleanServerAction(), new CleanLocalAction()])).load(
+      program,
+    );
 
     this.handleInvalidCommand(program);
   }

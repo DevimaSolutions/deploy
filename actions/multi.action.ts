@@ -1,7 +1,6 @@
 import { AbstractAction } from './abstract.action.js';
 
 export class MultiAction extends AbstractAction {
-
   constructor(private actions: AbstractAction[]) {
     super();
   }

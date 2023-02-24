@@ -6,7 +6,6 @@ import { packageInfo } from '../lib/utils/package-info.js';
 
 import { AbstractAction } from './abstract.action.js';
 
-
 export class InfoAction extends AbstractAction {
   private manager!: AbstractPackageManager;
 

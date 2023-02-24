@@ -4,11 +4,9 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "eslint.format.enable": true,
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint",
-  ],
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-  ],
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+  "eslint.validate": ["javascript", "typescript"],
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
