@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
-
+import { join } from 'node:path';
 import { PackageJson } from '../package-managers/package-json.interface';
 
 const require = createRequire(import.meta.url);
-export const packageInfo = require('../../package.json') as PackageJson;
+export const packageInfo = require(join(process.cwd(), 'package.json')) as PackageJson;

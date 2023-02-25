@@ -11,7 +11,7 @@ export class SchematicRunner extends AbstractRunner {
 
   public static findClosestSchematicsBinary(): string {
     try {
-      return require.resolve('@angular-devkit/schematics-cli/bin/schematics.js', {
+      return require.resolve('@angular-devkit/schematics-cli/bin/schematics', {
         paths: this.getModulePaths(),
       });
     } catch {

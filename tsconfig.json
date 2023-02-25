@@ -4,7 +4,7 @@
     "declaration": true,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "target": "ES6",
     "baseUrl": "./",
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -13,6 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "./dist"
   }
 }

@@ -55,7 +55,7 @@ export class CommandLoader {
         program.args.join(' '),
       );
       console.log(`See ${chalk.red('--help')} for a list of available commands.\n`);
-      process.exit(1);
+      process.exit(0);
     });
   }
 }
