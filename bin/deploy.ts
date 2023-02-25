@@ -12,14 +12,14 @@ const bootstrap = () => {
     .description('CLI tool for deployment JS projects via SSH.')
     .usage('<command> [options]')
     .helpOption('-h, --help', 'Output usage information.');
-
   CommandLoader.load(program);
-
-  program.parse(process.argv);
-
   if (!process.argv.slice(2).length) {
     program.outputHelp();
+    return process.exit(0);
   }
+  program.parse(process.argv);
+
+  return process.exit(0);
 };
 
 bootstrap();

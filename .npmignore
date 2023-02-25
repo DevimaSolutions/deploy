@@ -41,3 +41,10 @@ tsconfig.json
 .circleci
 .husky
 
+#sourses
+
+actions
+bin
+commands
+lib
+

@@ -12,19 +12,19 @@
     "lint": "eslint \"{actions,bin,commands,lib}/**/*.ts\" --fix",
     "typescript": "tsc --noEmit",
     "setup": "rimraf .husky/pre-commit .husky/pre-push && husky add .husky/pre-commit \"npx lint-staged\"",
-    "clean": "gulp clean",
-    "prebuild": "npm run clean",
+    "clean": "gulp clean && rimraf build",
+    "prebuild": "rimraf build",
     "build": "tsc -p tsconfig.build.json",
     "prepublish": "npm run build",
     "publish": "npm publish --access=public",
-    "start": "node bin/deploy.js",
+    "start": "node ./dist/bin/deploy.js",
     "dev": "npm run build && npm run start"
   },
   "engines": {
     "node": ">= 14.16.0"
   },
   "bin": {
-    "ds-deploy": "bin/deploy.js"
+    "ds-deploy": "./dist/bin/deploy.js"
   },
   "repository": {
     "type": "git",
@@ -44,13 +44,15 @@
   "homepage": "https://github.com/DevimaSolutions/deploy#readme",
   "dependencies": {},
   "devDependencies": {
+    "@parcel/packager-ts": "2.8.3",
+    "@parcel/transformer-typescript-types": "2.8.3",
     "@types/jest": "^27.0.1",
+    "@types/node": "^18.14.0",
     "@types/node-emoji": "^1.8.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "chalk": "^5.2.0",
-    "commander": "^10.0.0",
     "del": "^7.0.0",
+    "esbuild": "^0.17.10",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.26.0",
@@ -60,13 +62,15 @@
     "inquirer": "^9.1.4",
     "jest": "^27.2.5",
     "lint-staged": "^13.1.0",
-    "node-emoji": "^1.11.0",
-    "ora": "^6.1.2",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.5",
-    "ts-node": "10.9.1",
-    "typescript": "4.5.2"
+    "ts-node": "^10.9.1",
+    "typescript": "4.5.2",
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "node-emoji": "^1.11.0",
+    "ora": "^6.1.2"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -89,5 +93,8 @@
     "*.ts": [
       "eslint --fix"
     ]
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
