@@ -1,29 +1,43 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import chalk from 'chalk';
 
 import { PackageJson } from '../lib/package-managers/package-json.interface.js';
 import { MESSAGES } from '../lib/ui/messages.js';
-import { ConfigurationLoader, DeployConfiguration } from '../lib/utils/configuration.loader.js';
+import {
+  ConfigurationLoader,
+  DeployConfiguration,
+  configFileName,
+} from '../lib/utils/configuration.loader.js';
+import { AbstractConfigCreator } from '../strategies/config-creators/abstract.js';
+import { CreatorLoader } from '../strategies/config-creators/creator-loader.js';
+import { StrategySelector } from '../strategies/strategy.selector.js';
 
 import { AbstractAction } from './abstract.action.js';
 
 export class InitAction extends AbstractAction {
-  configurationFileName = '.dsdeployrc';
   projectName: string;
   config: DeployConfiguration | null = null;
+  configCreator: AbstractConfigCreator | null = null;
+
+  async getConfigCreator() {
+    if (!this.configCreator) {
+      const strategyType = await StrategySelector.selectStrategy();
+      this.configCreator = CreatorLoader.load(strategyType);
+    }
+    return this.configCreator;
+  }
 
   public async handle() {
     this.ensureCalledFromProjectDirectory();
     const isInitialized = await this.isAlreadyInitialized();
-
     this.ensureConfigurationFileIsIgnoredByGit();
-
+    await this.getConfigCreator();
     if (isInitialized) {
-      this.offerUpdateConfiguration();
+      await this.offerUpdateConfiguration();
     } else {
-      this.createConfiguration();
+      await this.createConfiguration();
     }
   }
 
@@ -44,35 +58,32 @@ export class InitAction extends AbstractAction {
   }
 
   async isAlreadyInitialized() {
-    this.config = await ConfigurationLoader.load(this.configurationFileName);
+    this.config = await ConfigurationLoader.load(configFileName);
     return this.config !== null;
   }
 
-  offerUpdateConfiguration() {
-    console.info(MESSAGES.UPDATING_CONFIGURATION(this.projectName));
-    console.info();
-    // TODO: edit config file filling values using cli
+  async offerUpdateConfiguration() {
+    const configCreator = await this.getConfigCreator();
+    await configCreator.offerUpdateConfiguration();
   }
 
-  createConfiguration() {
-    console.info(MESSAGES.CREATING_NEW_CONFIGURATION(this.projectName));
-    console.info();
-    // TODO: create config file filling values using cli
+  async createConfiguration() {
+    const configCreator = await this.getConfigCreator();
+    await configCreator.createConfiguration();
   }
 
   ensureConfigurationFileIsIgnoredByGit() {
+    const gitIgnore = join(process.cwd(), '.gitignore');
     try {
-      const buffer = readFileSync(join(process.cwd(), '.gitignore'));
+      const buffer = readFileSync(gitIgnore);
       const gitIgnorePatterns = buffer
         .toString()
         .split('\n')
         .map((line) => line.trim())
-        // remove comments
         .filter((line) => !line.startsWith('#'));
 
-      if (!gitIgnorePatterns.some((pattern) => pattern === this.configurationFileName)) {
-        // Not added to gitignore
-        // TODO: add `configurationFileName` to .gitignore
+      if (!gitIgnorePatterns.some((pattern) => pattern === configFileName)) {
+        writeFileSync(gitIgnore, `#deployment config \n${configFileName}\n\n${buffer.toString()}`);
       }
     } catch {
       // git might not be initialized

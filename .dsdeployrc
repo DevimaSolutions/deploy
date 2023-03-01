@@ -1,0 +1,11 @@
+{
+    "ssh": {
+        "pathToKeyFile": "/home/igor/.ssh/id_rsa.pub",
+        "username": "root",
+        "hostname": "192.168.1.1"
+    },
+    "build": {
+        "nodeVersion": "v18.14.2",
+        "server": "nginx"
+    }
+}
