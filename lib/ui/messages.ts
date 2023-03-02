@@ -33,4 +33,5 @@ export const MESSAGES = {
     `${EMOJIS.ROCKET} Configuration for ${chalk.green(name)} was updated successfully`,
   SELECT_DEPLOYMENT_TYPE: 'Select deployment type',
   INVALID_CONFIGS: `${EMOJIS.SMIRK} Config file is invalid, please run init command`,
+  ASK_UPDATE_CONFIG: 'Do you want to update configuration?',
 };

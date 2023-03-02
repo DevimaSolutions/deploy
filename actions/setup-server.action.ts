@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { promises as fs } from 'fs';
 import { join } from 'node:path';
 
 import chalk from 'chalk';
@@ -55,8 +55,8 @@ export class SetupServerAction extends AbstractAction {
     console.info('DS Deploy CLI Version :', chalk.blue(packageInfo.version), '\n');
   }
 
-  readProjectPackageDependencies(): PackageJsonDependencies {
-    const buffer = readFileSync(join(process.cwd(), 'package.json'));
+  async readProjectPackageDependencies(): Promise<PackageJsonDependencies> {
+    const buffer = fs.readFile(join(process.cwd(), 'package.json'));
     const pack = JSON.parse(buffer.toString());
     const dependencies = { ...pack.dependencies, ...pack.devDependencies };
     Object.keys(dependencies).forEach((key) => {

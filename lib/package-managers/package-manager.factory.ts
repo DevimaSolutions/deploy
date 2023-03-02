@@ -1,4 +1,4 @@
-import { readdir } from 'node:fs';
+import { promises as fs } from 'fs';
 
 import { AbstractPackageManager } from './abstract.package-manager.js';
 import { NpmPackageManager } from './npm.package-manager.js';
@@ -21,20 +21,17 @@ export class PackageManagerFactory {
   }
 
   public static async find(): Promise<AbstractPackageManager> {
-    return new Promise<AbstractPackageManager>((resolve) => {
-      readdir(process.cwd(), (error, files) => {
-        if (error) {
-          resolve(this.create(PackageManager.NPM));
-        } else {
-          if (files.findIndex((filename) => filename === 'yarn.lock') > -1) {
-            resolve(this.create(PackageManager.YARN));
-          } else if (files.findIndex((filename) => filename === 'pnpm-lock.yaml') > -1) {
-            resolve(this.create(PackageManager.PNPM));
-          } else {
-            resolve(this.create(PackageManager.NPM));
-          }
-        }
-      });
-    });
+    try {
+      const files = await fs.readdir(process.cwd());
+      if (files.findIndex((filename) => filename === 'yarn.lock') > -1) {
+        return this.create(PackageManager.YARN);
+      } else if (files.findIndex((filename) => filename === 'pnpm-lock.yaml') > -1) {
+        return this.create(PackageManager.PNPM);
+      } else {
+        return this.create(PackageManager.NPM);
+      }
+    } catch (e) {
+      return this.create(PackageManager.NPM);
+    }
   }
 }

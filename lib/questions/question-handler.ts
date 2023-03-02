@@ -1,11 +1,8 @@
 import { Answers, Question } from 'inquirer';
 import * as inquirer from 'inquirer';
 import Joi from 'joi';
-
-import { IQuestionInput, IQuestionSelect } from './question-generators.js';
-
 export interface IQuestion {
-  input: IQuestionInput | IQuestionSelect;
+  input: Question;
   validation?: Joi.Schema;
 }
 
@@ -20,14 +17,14 @@ const questionHandler = async (questions: IQuestion[]) => {
     const validation = questions[i].validation;
 
     if (validation) {
-      const res = validation.validate(answer[questions[i].input.name]);
-
+      const res = validation.validate(answer[questions[i].input.name as string]);
+      //If the input is invalid, the user will receive an error message and repeat the same input until the answer is correct
       if (res.error) {
         console.error(res.error.message);
         continue;
       }
     }
-
+    //If answer is correct user will get next input
     answers = { ...answer, ...answers };
     i++;
   }
