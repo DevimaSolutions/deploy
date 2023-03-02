@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 import { join } from 'node:path';
 
 import chalk from 'chalk';
@@ -28,7 +28,7 @@ export class InitAction extends AbstractAction {
   public async handle() {
     await this.ensureCalledFromProjectDirectory();
     const isInitialized = await this.isAlreadyInitialized();
-    this.ensureConfigurationFileIsIgnoredByGit();
+    await this.ensureConfigurationFileIsIgnoredByGit();
     await this.getConfigCreator();
     if (isInitialized) {
       await this.offerUpdateConfiguration();

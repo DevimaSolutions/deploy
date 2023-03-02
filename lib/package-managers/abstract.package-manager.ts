@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 import { join } from 'node:path';
 
 import chalk from 'chalk';

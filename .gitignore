@@ -1,5 +1,5 @@
-#Deployment config 
- .dsdeployrc
+#deployment config 
+.dsdeployrc
 
 # dependencies
 /node_modules

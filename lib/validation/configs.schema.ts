@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 import Joi from 'joi';
 
@@ -16,7 +16,7 @@ export const usernameSchema = Joi.string()
 
 export const hostnameSchema = Joi.string()
   .required()
-  .regex(configRegex.hostRegex)
+  .regex(configRegex.ipAddressOrHostnameRegex)
   .error(() => new Error(MESSAGES.INVALID_HOST));
 export const pathToKeyFileSchema = Joi.string()
   .required()

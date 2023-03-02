@@ -10,8 +10,8 @@ const questionHandler = async (questions: IQuestion[]) => {
   const prompt: inquirer.PromptModule = inquirer.createPromptModule();
   let answers: Answers = {};
   let answer: Answers = {};
-
-  for (let i = 0; i < questions.length; ) {
+  let i = 0;
+  while (i < questions.length) {
     answer = await prompt([questions[i].input] as ReadonlyArray<Question>);
 
     const validation = questions[i].validation;

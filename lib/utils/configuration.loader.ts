@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
 import { existsSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { Answers } from 'inquirer';
@@ -52,12 +52,10 @@ export class ConfigurationLoader {
 
   public static async updateOrInsert(key: string, values: Answers) {
     const configFilePath = this.getConfigPath();
-    if (!existsSync(configFilePath)) {
-      await fs.writeFile(configFilePath, '');
-    }
 
-    const configBuffer = await fs.readFile(configFilePath);
-    const configString = configBuffer.toString();
+    const configString = !existsSync(configFilePath)
+      ? ''
+      : (await fs.readFile(configFilePath)).toString();
 
     const configs = configString.length ? JSON.parse(configString) : {};
     configs[key] = { ...configs[key], ...values };
