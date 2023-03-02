@@ -1,15 +1,15 @@
-import { generateSelect } from './question-generators.js';
+import { generateConfirm } from './question-generators.js';
 import questionHandler from './question-handler.js';
 
 export const yesOrNoSelect = async (message: string): Promise<boolean> => {
   const questions = [
     {
-      input: generateSelect('yesOrNoSelect', message, ['Yes', 'No']),
+      input: generateConfirm('confirm', message),
     },
   ];
 
   const buildAnswers = await questionHandler(questions);
-  const answer = buildAnswers['yesOrNoSelect'];
+  const answer = buildAnswers['confirm'];
 
-  return answer === 'Yes';
+  return answer;
 };

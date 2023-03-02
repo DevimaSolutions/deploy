@@ -46,7 +46,7 @@ export class InfoAction extends AbstractAction {
     console.info('DS Deploy CLI Version :', chalk.blue(packageInfo.version), '\n');
   }
 
-  async refreshConfiguration() {
+  async shouldUpdateConfiguration() {
     const updateConfiguration = await yesOrNoSelect(MESSAGES.ASK_UPDATE_CONFIG);
 
     if (!updateConfiguration) {
@@ -66,7 +66,7 @@ export class InfoAction extends AbstractAction {
     }
     if (!configuration.isValid) {
       console.info();
-      await this.refreshConfiguration();
+      await this.shouldUpdateConfiguration();
     }
   }
 }

@@ -21,13 +21,13 @@ export class VpsConfigCreator extends AbstractConfigCreator {
     console.info(MESSAGES.SSH_CONFIGURATION);
 
     const sshConfigs = await this.askSshConfigQuestions();
-    ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
+    await ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
 
     console.info(MESSAGES.CONFIGURATION_UPDATED('ssh'));
     console.info(MESSAGES.BUILD_CONFIGURATION);
 
     const buildConfigs = await this.askBuildConfigQuestions();
-    ConfigurationLoader.updateOrInsert('build', buildConfigs);
+    await ConfigurationLoader.updateOrInsert('build', buildConfigs);
 
     console.info(MESSAGES.CONFIGURATION_UPDATED('build'));
   }
@@ -38,13 +38,13 @@ export class VpsConfigCreator extends AbstractConfigCreator {
     console.info(MESSAGES.SSH_CONFIGURATION);
 
     const sshConfigs = await this.askSshConfigQuestions();
-    ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
+    await ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
 
     console.info(MESSAGES.CONFIGURATION_CREATED('ssh'));
     console.info(MESSAGES.BUILD_CONFIGURATION);
 
     const buildConfigs = await this.askBuildConfigQuestions();
-    ConfigurationLoader.updateOrInsert('build', buildConfigs);
+    await ConfigurationLoader.updateOrInsert('build', buildConfigs);
 
     console.info(MESSAGES.CONFIGURATION_CREATED('build'));
   }

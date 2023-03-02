@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 
 import { AbstractPackageManager } from './abstract.package-manager.js';
 import { NpmPackageManager } from './npm.package-manager.js';

@@ -17,3 +17,9 @@ export const generateSelect = (
   message,
   choices,
 });
+
+export const generateConfirm = (name: string, message: string): ListQuestionOptions => ({
+  type: 'confirm',
+  name,
+  message,
+});
