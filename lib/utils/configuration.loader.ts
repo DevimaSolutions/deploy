@@ -3,9 +3,8 @@ import { join } from 'node:path';
 
 import { Answers } from 'inquirer';
 
+import { MESSAGES } from '../../lib/ui/messages.js';
 import { deployConfigSchema } from '../validation/configs.schema.js';
-
-export const configFileName = '.dsdeployrc';
 
 export interface SSHConfiguration {
   username: string;
@@ -23,7 +22,14 @@ export interface DeployConfiguration {
 }
 
 export class ConfigurationLoader {
+  public static configFileName = '.dsdeployrc';
+
   public static validationSchema = deployConfigSchema;
+
+  public static getConfigPath() {
+    const configFilePath = join(process.cwd(), this.configFileName);
+    return configFilePath;
+  }
 
   public static async load(configFilePath: string) {
     try {
@@ -31,14 +37,17 @@ export class ConfigurationLoader {
       const configFile = JSON.parse(buffer.toString()) as DeployConfiguration;
 
       const values = await this.validationSchema.validateAsync(configFile);
+
       return values;
-    } catch {
+    } catch (e) {
+      console.error(MESSAGES.INVALID_CONFIGS);
+
       return null;
     }
   }
 
   public static upsert(key: string, values: Answers) {
-    const configFilePath = join(process.cwd(), configFileName);
+    const configFilePath = this.getConfigPath();
     if (!existsSync(configFilePath)) {
       closeSync(openSync(configFilePath, 'w'));
     }
@@ -47,6 +56,6 @@ export class ConfigurationLoader {
     const configs = configString.length ? JSON.parse(configString) : {};
     configs[key] = { ...configs[key], ...values };
 
-    writeFileSync(configFileName, JSON.stringify(configs, null, 4));
+    writeFileSync(this.configFileName, JSON.stringify(configs, null, 4));
   }
 }

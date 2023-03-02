@@ -2,6 +2,7 @@ import chalk from 'chalk';
 
 import { AbstractPackageManager, PackageManagerFactory } from '../lib/package-managers/index.js';
 import { BANNER } from '../lib/ui/index.js';
+import { ConfigurationLoader } from '../lib/utils/configuration.loader.js';
 import { packageInfo } from '../lib/utils/package-info.js';
 
 import { AbstractAction } from './abstract.action.js';
@@ -14,7 +15,7 @@ export class InfoAction extends AbstractAction {
     this.displayBanner();
     await this.displaySystemInformation();
     this.displayCliVersion();
-    // TODO: display current configuration status
+    await this.displayConfigFile();
   }
 
   private displayBanner() {
@@ -39,5 +40,32 @@ export class InfoAction extends AbstractAction {
   displayCliVersion(): void {
     console.info(chalk.green('[DS Deploy CLI]'));
     console.info('DS Deploy CLI Version :', chalk.blue(packageInfo.version), '\n');
+  }
+
+  private displayObject(objectToDisplay: object) {
+    for (const key in objectToDisplay) {
+      if (
+        typeof objectToDisplay[key as keyof object] === 'object' &&
+        objectToDisplay[key as keyof object] !== null
+      ) {
+        console.info();
+        console.info(`${chalk.green(key)} :`);
+        this.displayObject(objectToDisplay[key as keyof object] as object);
+      } else {
+        console.info(`${key} : ${chalk.blue(objectToDisplay[key as keyof object])}`);
+      }
+    }
+  }
+
+  async displayConfigFile() {
+    console.info(chalk.green('[Configuration information]'));
+    const configuration = await ConfigurationLoader.load(ConfigurationLoader.configFileName);
+
+    if (!configuration) {
+      return;
+    }
+
+    this.displayObject(configuration);
+    console.info();
   }
 }
