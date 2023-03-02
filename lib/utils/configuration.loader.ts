@@ -1,4 +1,5 @@
-import { closeSync, existsSync, openSync, readFileSync, writeFileSync } from 'node:fs';
+import { promises as fs } from 'fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Answers } from 'inquirer';
@@ -19,6 +20,7 @@ export interface BuildConfiguration {
 export interface DeployConfiguration {
   ssh: SSHConfiguration;
   build: BuildConfiguration;
+  [key: string]: unknown;
 }
 
 export class ConfigurationLoader {
@@ -32,30 +34,34 @@ export class ConfigurationLoader {
   }
 
   public static async load(configFilePath: string) {
+    let configFile: DeployConfiguration | null = null;
     try {
-      const buffer = readFileSync(configFilePath);
-      const configFile = JSON.parse(buffer.toString()) as DeployConfiguration;
+      const buffer = await fs.readFile(configFilePath);
+      configFile = JSON.parse(buffer.toString()) as DeployConfiguration;
 
       const values = await this.validationSchema.validateAsync(configFile);
 
-      return values;
+      return { values, isValid: true };
     } catch (e) {
+      console.info();
       console.error(MESSAGES.INVALID_CONFIGS);
 
-      return null;
+      return { values: configFile, isValid: false };
     }
   }
 
-  public static upsert(key: string, values: Answers) {
+  public static async updateOrInsert(key: string, values: Answers) {
     const configFilePath = this.getConfigPath();
     if (!existsSync(configFilePath)) {
-      closeSync(openSync(configFilePath, 'w'));
+      await fs.writeFile(configFilePath, '');
     }
-    const configString = readFileSync(configFilePath).toString();
+
+    const configBuffer = await fs.readFile(configFilePath);
+    const configString = configBuffer.toString();
 
     const configs = configString.length ? JSON.parse(configString) : {};
     configs[key] = { ...configs[key], ...values };
 
-    writeFileSync(this.configFileName, JSON.stringify(configs, null, 4));
+    await fs.writeFile(this.configFileName, JSON.stringify(configs, null, 4));
   }
 }

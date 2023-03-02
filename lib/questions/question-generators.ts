@@ -1,22 +1,6 @@
-export interface IQuestionInput {
-  type: string;
-  name: string;
-  message: string;
-  default: string;
-}
+import { ListQuestionOptions, Question } from 'inquirer';
 
-export interface IQuestionSelect {
-  type: string;
-  name: string;
-  message: string;
-  choices: string[];
-}
-
-export const generateInput = (
-  name: string,
-  message: string,
-  defaultAnswer?: string,
-): IQuestionInput => ({
+export const generateInput = (name: string, message: string, defaultAnswer?: string): Question => ({
   type: 'input',
   name,
   message,
@@ -27,7 +11,7 @@ export const generateSelect = (
   name: string,
   message: string,
   choices: string[],
-): IQuestionSelect => ({
+): ListQuestionOptions => ({
   type: 'list',
   name,
   message,

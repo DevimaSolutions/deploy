@@ -15,7 +15,7 @@ interface INodeResponse {
   security: boolean;
 }
 
-const getLastLts = async () => {
+const getLatestLtsVersion = async () => {
   const nodeVersionsList = await axios.get<INodeResponse[]>(NODE_VERSION_URL);
 
   const version = nodeVersionsList.data
@@ -25,6 +25,6 @@ const getLastLts = async () => {
   return version as INodeResponse;
 };
 
-const nodeVersionLoader = { getLastLts };
+const nodeUtil = { getLatestLtsVersion };
 
-export default nodeVersionLoader;
+export default nodeUtil;

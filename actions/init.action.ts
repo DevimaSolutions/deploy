@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { promises as fs } from 'fs';
 import { join } from 'node:path';
 
 import chalk from 'chalk';
@@ -7,7 +7,7 @@ import { PackageJson } from '../lib/package-managers/package-json.interface.js';
 import { MESSAGES } from '../lib/ui/messages.js';
 import { ConfigurationLoader, DeployConfiguration } from '../lib/utils/configuration.loader.js';
 import { AbstractConfigCreator } from '../strategies/config-creators/abstract.js';
-import { CreatorLoader } from '../strategies/config-creators/creator-loader.js';
+import { DeploymentStrategyCreatorFactory } from '../strategies/config-creators/creator-loader.js';
 import { StrategySelector } from '../strategies/strategy.selector.js';
 
 import { AbstractAction } from './abstract.action.js';
@@ -20,13 +20,13 @@ export class InitAction extends AbstractAction {
   async getConfigCreator() {
     if (!this.configCreator) {
       const strategyType = await StrategySelector.selectStrategy();
-      this.configCreator = CreatorLoader.load(strategyType);
+      this.configCreator = DeploymentStrategyCreatorFactory.create(strategyType);
     }
     return this.configCreator;
   }
 
   public async handle() {
-    this.ensureCalledFromProjectDirectory();
+    await this.ensureCalledFromProjectDirectory();
     const isInitialized = await this.isAlreadyInitialized();
     this.ensureConfigurationFileIsIgnoredByGit();
     await this.getConfigCreator();
@@ -37,9 +37,9 @@ export class InitAction extends AbstractAction {
     }
   }
 
-  ensureCalledFromProjectDirectory() {
+  async ensureCalledFromProjectDirectory() {
     try {
-      const { name } = this.readProjectPackageFile();
+      const { name } = await this.readProjectPackageFile();
       this.projectName = name;
     } catch (err) {
       console.error(chalk.red(MESSAGES.INFORMATION_PACKAGE_MANAGER_FAILED));
@@ -47,14 +47,17 @@ export class InitAction extends AbstractAction {
     }
   }
 
-  readProjectPackageFile() {
-    const buffer = readFileSync(join(process.cwd(), 'package.json'));
+  async readProjectPackageFile() {
+    const buffer = await fs.readFile(join(process.cwd(), 'package.json'));
     const packageFile = JSON.parse(buffer.toString());
     return packageFile as PackageJson;
   }
 
   async isAlreadyInitialized() {
-    this.config = await ConfigurationLoader.load(ConfigurationLoader.configFileName);
+    const config = await ConfigurationLoader.load(ConfigurationLoader.configFileName);
+    if (config.isValid) {
+      this.config = config.values;
+    }
     return this.config !== null;
   }
 
@@ -68,10 +71,10 @@ export class InitAction extends AbstractAction {
     await configCreator.createConfiguration();
   }
 
-  ensureConfigurationFileIsIgnoredByGit() {
-    const gitIgnore = join(process.cwd(), '.gitignore');
+  async ensureConfigurationFileIsIgnoredByGit() {
+    const gitIgnoreFilePath = join(process.cwd(), '.gitignore');
     try {
-      const buffer = readFileSync(gitIgnore);
+      const buffer = await fs.readFile(gitIgnoreFilePath);
       const gitIgnorePatterns = buffer
         .toString()
         .split('\n')
@@ -79,8 +82,8 @@ export class InitAction extends AbstractAction {
         .filter((line) => !line.startsWith('#'));
 
       if (!gitIgnorePatterns.some((pattern) => pattern === ConfigurationLoader.configFileName)) {
-        writeFileSync(
-          gitIgnore,
+        fs.writeFile(
+          gitIgnoreFilePath,
           `#deployment config \n${ConfigurationLoader.configFileName}\n\n${buffer.toString()}`,
         );
       }

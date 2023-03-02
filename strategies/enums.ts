@@ -1,3 +1,3 @@
 export enum DeploymentType {
-  Vps = 'Vps',
+  VPS = 'VPS',
 }

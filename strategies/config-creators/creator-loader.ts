@@ -3,12 +3,12 @@ import { DeploymentType } from '../../strategies/enums.js';
 import { AbstractConfigCreator } from './abstract.js';
 import { VpsConfigCreator } from './vps.js';
 
-export class CreatorLoader {
+export class DeploymentStrategyCreatorFactory {
   private static strategySelector = {
-    [DeploymentType.Vps]: VpsConfigCreator,
+    [DeploymentType.VPS]: VpsConfigCreator,
   };
 
-  public static load(type: DeploymentType): AbstractConfigCreator {
+  public static create(type: DeploymentType): AbstractConfigCreator {
     const creator = new this.strategySelector[type]();
 
     return creator;

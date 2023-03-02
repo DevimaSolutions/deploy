@@ -2,7 +2,7 @@ import { generateInput, generateSelect } from '../../lib/questions/question-gene
 import questionHandler from '../../lib/questions/question-handler.js';
 import { MESSAGES } from '../../lib/ui/messages.js';
 import { ConfigurationLoader, DeployConfiguration } from '../../lib/utils/configuration.loader.js';
-import nodeVersionLoader from '../../lib/utils/node-version.loader.js';
+import nodeUtil from '../../lib/utils/node-util.js';
 import {
   usernameSchema,
   hostnameSchema,
@@ -20,14 +20,14 @@ export class VpsConfigCreator extends AbstractConfigCreator {
     console.info();
     console.info(MESSAGES.SSH_CONFIGURATION);
 
-    const sshConfigs = await this.sshQuestions();
-    ConfigurationLoader.upsert('ssh', sshConfigs);
+    const sshConfigs = await this.askSshConfigQuestions();
+    ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
 
     console.info(MESSAGES.CONFIGURATION_UPDATED('ssh'));
     console.info(MESSAGES.BUILD_CONFIGURATION);
 
-    const buildConfigs = await this.buildQuestions();
-    ConfigurationLoader.upsert('build', buildConfigs);
+    const buildConfigs = await this.askBuildConfigQuestions();
+    ConfigurationLoader.updateOrInsert('build', buildConfigs);
 
     console.info(MESSAGES.CONFIGURATION_UPDATED('build'));
   }
@@ -37,19 +37,19 @@ export class VpsConfigCreator extends AbstractConfigCreator {
     console.info();
     console.info(MESSAGES.SSH_CONFIGURATION);
 
-    const sshConfigs = await this.sshQuestions();
-    ConfigurationLoader.upsert('ssh', sshConfigs);
+    const sshConfigs = await this.askSshConfigQuestions();
+    ConfigurationLoader.updateOrInsert('ssh', sshConfigs);
 
     console.info(MESSAGES.CONFIGURATION_CREATED('ssh'));
     console.info(MESSAGES.BUILD_CONFIGURATION);
 
-    const buildConfigs = await this.buildQuestions();
-    ConfigurationLoader.upsert('build', buildConfigs);
+    const buildConfigs = await this.askBuildConfigQuestions();
+    ConfigurationLoader.updateOrInsert('build', buildConfigs);
 
     console.info(MESSAGES.CONFIGURATION_CREATED('build'));
   }
 
-  async sshQuestions() {
+  async askSshConfigQuestions() {
     const questions = [
       {
         input: generateInput('hostname', MESSAGES.ENTER_HOST),
@@ -69,8 +69,8 @@ export class VpsConfigCreator extends AbstractConfigCreator {
     return sshAnswers;
   }
 
-  async buildQuestions() {
-    const node = await nodeVersionLoader.getLastLts();
+  async askBuildConfigQuestions() {
+    const node = await nodeUtil.getLatestLtsVersion();
     const questions = [
       {
         input: generateInput('nodeVersion', MESSAGES.ENTER_NODE_VERSION, node.version),

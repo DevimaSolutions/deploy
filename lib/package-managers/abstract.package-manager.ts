@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs';
+import { promises as fs } from 'fs';
 import { join } from 'node:path';
 
 import chalk from 'chalk';
@@ -105,19 +105,9 @@ export abstract class AbstractPackageManager {
     return dependencies as ProjectDependency[];
   }
 
-  private async readPackageJson<T extends PackageJson>() {
-    return new Promise<T>((resolve, reject) => {
-      readFile(
-        join(process.cwd(), 'package.json'),
-        (error: NodeJS.ErrnoException | null, buffer: Buffer) => {
-          if (error !== undefined && error !== null) {
-            reject(error);
-          } else {
-            resolve(JSON.parse(buffer.toString()));
-          }
-        },
-      );
-    });
+  private async readPackageJson<T extends PackageJson>(): Promise<T> {
+    const file = await fs.readFile(join(process.cwd(), 'package.json'));
+    return JSON.parse(file.toString());
   }
 
   public async updateProduction(dependencies: string[]) {
