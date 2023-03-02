@@ -5,11 +5,7 @@ import chalk from 'chalk';
 
 import { PackageJson } from '../lib/package-managers/package-json.interface.js';
 import { MESSAGES } from '../lib/ui/messages.js';
-import {
-  ConfigurationLoader,
-  DeployConfiguration,
-  configFileName,
-} from '../lib/utils/configuration.loader.js';
+import { ConfigurationLoader, DeployConfiguration } from '../lib/utils/configuration.loader.js';
 import { AbstractConfigCreator } from '../strategies/config-creators/abstract.js';
 import { CreatorLoader } from '../strategies/config-creators/creator-loader.js';
 import { StrategySelector } from '../strategies/strategy.selector.js';
@@ -58,7 +54,7 @@ export class InitAction extends AbstractAction {
   }
 
   async isAlreadyInitialized() {
-    this.config = await ConfigurationLoader.load(configFileName);
+    this.config = await ConfigurationLoader.load(ConfigurationLoader.configFileName);
     return this.config !== null;
   }
 
@@ -82,8 +78,11 @@ export class InitAction extends AbstractAction {
         .map((line) => line.trim())
         .filter((line) => !line.startsWith('#'));
 
-      if (!gitIgnorePatterns.some((pattern) => pattern === configFileName)) {
-        writeFileSync(gitIgnore, `#deployment config \n${configFileName}\n\n${buffer.toString()}`);
+      if (!gitIgnorePatterns.some((pattern) => pattern === ConfigurationLoader.configFileName)) {
+        writeFileSync(
+          gitIgnore,
+          `#deployment config \n${ConfigurationLoader.configFileName}\n\n${buffer.toString()}`,
+        );
       }
     } catch {
       // git might not be initialized
